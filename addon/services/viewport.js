@@ -7,17 +7,22 @@ const {
 
 export default Ember.Service.extend({
   _pool: computed(() => A()),
+  isAnimating: true,
   init() {
     this.flush();
   },
   flush() {
     window.requestAnimationFrame(() => {
-      if (this.get('isDestroying')) {
-        return;
+      if(this.get('isAnimating')) {
+        if (this.get('isDestroying')) {
+          return;
+        }
+
+        let currentPool = this.get('_pool');
+
+        this.set('_pool', A());
+        currentPool.forEach((fn) => fn());
       }
-      let currentPool = this.get('_pool');
-      this.set('_pool', A());
-      currentPool.forEach((fn) => fn());
       this.flush();
     });
   },
