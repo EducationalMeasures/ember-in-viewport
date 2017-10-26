@@ -26,8 +26,13 @@ export default Service.extend({
   },
   flush() {
     window.requestAnimationFrame(() => {
+      // The isDestroying check must happen first or it causes weird test
+      // failures elsewhere in code using this addon.
+      if(this.get('isDestroying')) {
+        return
+      }
       // when the service is told not to animate, stop the loop entirely
-      if(this.get('isNotAnimating') || this.get('isDestroying')) {
+      if(this.get('isNotAnimating')) {
         return;
       }
 
